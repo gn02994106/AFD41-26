@@ -1303,9 +1303,8 @@ importStyles("https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.m
 <!-- 返回前頁：紀錄於變數$return -->
 $(document).on(':passagestart', function (ev) {
   Object.entries(State.variables.locations).forEach((obj) => {
-    if (obj[1] === 1) {
-      State.variables.locations[obj[0]] = 2;
-    }
+    State.variables.locations[State.variables.location] = 0;
+    State.variables.locations[obj[0]] = 2;
   });
   if (ev.passage.title === '公園' || ev.passage.title === 'start' || ev.passage.title === '展場' || ev.passage.title === '表演舞台區') {
     State.variables.location = ev.passage.title;
@@ -1334,6 +1333,9 @@ $(document).on(':passagestart', function (ev) {
   }
 	if (!ev.passage.tags.includes('noreturn')) {
 		State.variables.return = ev.passage.title;
+	}
+	if (ev.passage.tags.includes('no-history')) {
+		State.history.pop();
 	}
 });
 
@@ -1618,7 +1620,7 @@ Macro.add('message', {
                               "子泉": false,
                               "host": false,
                               "KylarStole": false,
-                              "sausage": false,
+                              "sausage": 0,
                               "糕糕": false,
                               "麥香魚": false}&gt;&gt;
   &lt;&lt;set $boughtGoods to {"狗球": false,
@@ -1737,7 +1739,7 @@ Macro.add('message', {
                               "表演舞台區": "表演舞台區"}&gt;&gt;\
     &lt;&lt;for _i to 0; _i lt Object.keys(_available).length; _i++&gt;&gt;\
       &lt;&lt;if $locations[Object.keys(_available)[_i]] is 0&gt;&gt;\
-        &lt;&lt;set _available[Object.keys(_available)[_i]] to `@@color:gold;$location@@`&gt;&gt;\
+        &lt;&lt;set _available[Object.keys(_available)[_i]] to "@@color:gold;" + Object.keys(_available)[_i] + "@@"&gt;&gt;\
       &lt;&lt;elseif $locations[Object.keys(_available)[_i]] is 1&gt;&gt;\
         &lt;&lt;set _tmp to Object.keys(_available)[_i]&gt;&gt;\
         &lt;&lt;set _available[Object.keys(_available)[_i]] to "[[" + Object.keys(_available)[_i] + "|" + (Object.keys(_available)[_i] is "大廳" ? "start" : Object.keys(_available)[_i]) + "]]"&gt;&gt;\
@@ -1745,38 +1747,44 @@ Macro.add('message', {
     &lt;&lt;/for&gt;&gt;\
     _available["公園"]－_available["大廳"]－_available["展場"]
     　　　　　　｜ 
-    　　　_available["表演舞台區"]
+    　　　_available["表演舞台區"]\
+  &lt;&lt;/widget&gt;&gt;
+
+  /*側邊欄提示*/
+  &lt;&lt;widget "tips"&gt;&gt;\
+    &lt;div style="font-size:14px; color: gray;"&gt;\
+      &lt;&lt;if $inventory.includes("🐹 圓潤倉鼠（自動跟隨）")
+                and ($inventory.includes("鼠球的蘋果乾")
+                  or $inventory.includes("鼠球的奶油麵包")
+                  or $inventory.includes("鼠球的巧克力米"))&gt;&gt;\
+        &lt;&lt;set _tmp to $inventory.filter((item) => item.includes("鼠球的"))&gt;&gt;\
+        &lt;&lt;if random(1, 3) is 1&gt;&gt;\
+          &lt;&lt;set _eaten to _tmp[random(0, _tmp.length - 1)]&gt;&gt;\
+            &lt;&lt;run $inventory.delete(_eaten)&gt;&gt;\
+            &lt;&lt;set _eaten to _eaten.replace("鼠球的", "")&gt;&gt;\
+            @@color:red;圓潤倉鼠 正在光明正大地吃你背包裡的_eaten！@@
+          &lt;&lt;else&gt;&gt;\
+
+
+          &lt;&lt;/if&gt;&gt;\
+      &lt;&lt;else&gt;&gt;\
+        &lt;&lt;if random(1, 3) is 1&gt;&gt;\
+          多在展場內「閒逛」可能觸發一些神祕的事件……？
+        &lt;&lt;else&gt;&gt;\
+
+
+        &lt;&lt;/if&gt;&gt;\
+      &lt;&lt;/if&gt;&gt;\
+    &lt;/div&gt;\
   &lt;&lt;/widget&gt;&gt;
 </tw-passagedata>
 
-  &lt;&lt;widget "map"&gt;&gt;\
-    &lt;&lt;silently&gt;&gt;
-      <!-- sanity checks --> <!-- 屬性（字串） 增減量（數字） -->
-      &lt;&lt;if _args.length gt 0 or typeof(_args[0]) isnot "string" or typeof(_args[1]) isnot "number"&gt;&gt;
-        &lt;&lt;set _map to '<span class="red">map error: invalid arguments: _args</span>'&gt;&gt;
-      &lt;&lt;else&gt;&gt;
-        &lt;&lt;switch _args[0].replace("?", "")&gt;&gt;
-          &lt;&lt;case "壓力" "興奮" "性奮" "創傷" "疼痛"&gt;&gt;
-            &lt;&lt;set _output to formatStat(_args[0], _args[1], (_args[1] gt 0) ? "red" : "green")&gt;&gt;
-          &lt;&lt;case "疲勞"&gt;&gt;
-            &lt;&lt;set _output to formatStat(_args[0], _args[1], (_args[1] gt 0) ? "red" : "green")
-                                   + formatStat("體力", -_args[1], (_args[1] gt 0) ? "red" : "green")&gt;&gt;
-          &lt;&lt;case "自控" "體力" "陪伴"&gt;&gt;
-            &lt;&lt;set _output to formatStat(_args[0], _args[1], (_args[1] gt 0) ? "green" : "red")&gt;&gt;
-          &lt;&lt;case "意識"&gt;&gt;
-            &lt;&lt;set _output to formatStat(_args[0], _args[1], (_args[1] gt 0) ? "steelBlue" : "royalBlue")&gt;&gt;
-          &lt;&lt;case "催眠"&gt;&gt;
-            &lt;&lt;set _output to formatStat(_args[0], _args[1], "teal")&gt;&gt;
-          &lt;&lt;default&gt;&gt;
-            &lt;&lt;set _output to formatStat(_args[0], _args[1], "white")&gt;&gt;
-        &lt;&lt;/switch&gt;&gt;
-      &lt;&lt;/if&gt;&gt;
-    &lt;&lt;/silently&gt;&gt;\
-    &lt;&lt;=_map&gt;&gt;\
-  &lt;&lt;/widget&gt;&gt;
+<tw-passagedata pid="2" name="StoryMenu" tags="noreturn" position="0,500" size="100,100">
+  &lt;&lt;link 背包 `(state.passage is "背包" ? $return : "背包")`&gt;&gt;
+  &lt;&lt;/link&gt;&gt;
+  &lt;&lt;link 致謝名單 `(state.passage is "致謝名單" ? $return : "致謝名單")`&gt;&gt;
+  &lt;&lt;/link&gt;&gt;
 </tw-passagedata>
-
-<tw-passagedata pid="2" name="StoryMenu" tags="noreturn" position="0,500" size="100,100">[[背包]]</tw-passagedata>
 <tw-passagedata pid="3" name="*StoryBanner" tags="noreturn" position="0,0" size="100,100"></tw-passagedata>
 <tw-passagedata pid="4" name="StoryDisplayTitle" tags="noreturn" position="0,100" size="100,100">AFD41-26</tw-passagedata>
 <tw-passagedata pid="5" name="StorySubtitle" tags="noreturn" position="0,200" size="100,100">
@@ -1789,16 +1797,17 @@ Macro.add('message', {
 &lt;span id=&#39;staminabar&#39;&gt;&lt;meter @value=&quot;$stamina&quot; min=&quot;0&quot; max=&quot;100&quot; low=&quot;15&quot;&gt;&lt;/meter&gt;&lt;/span&gt;
 ----
 [[空氣攤位|https://magma.com/d/7nrfOJAwFC/]]
-[[回饋表單|]]
+回饋表單<!-- [[回饋表單|]] -->
 ----
-會場地圖
-
+&lt;div style = "margin-bottom: 10px;"&gt;會場地圖&lt;/div&gt;\
 &lt;&lt;map()&gt;&gt;
 ----
+&lt;&lt;tips()&gt;&gt;
 </tw-passagedata>
 <tw-passagedata pid="8" name="*StoryInterface" tags="noreturn" position="0,700" size="100,100"></tw-passagedata>
 <tw-passagedata pid="9" name="start" tags="" position="325,100" size="100,100">\
-  你踏入了會場大廳，抬頭看到了上面的布條"AF&lt;&lt;=(!$randomEvent["AFK"]) ? "K" : "&lt;span style='text-shadow:0 0 4px rgba(255,255,255);'&gt;D&lt;/span&gt;"&gt;&gt;41-26"。\
+  你在會場的大廳。
+  你可以看到高高掛著的布條"AF&lt;&lt;=(!$randomEvent["AFK"]) ? "K" : "&lt;span style='text-shadow:0 0 4px rgba(255,255,255);'&gt;D&lt;/span&gt;"&gt;&gt;41-26"。\
   &lt;&lt;if !$randomEvent["AFK"]&gt;&gt;\
     &lt;&lt;rng 10&gt;&gt;\
     &lt;&lt;if $rng is 1&gt;&gt;\
@@ -1832,15 +1841,15 @@ Macro.add('message', {
   [[阿酒攤位]]
   [[鼠球攤位]]
   [[子泉攤位]]
-  [[糕糕攤位]]
   [[麥香魚攤位]]
+  [[糕糕攤位]]
 
-  &lt;&lt;if $stamina gte 1&gt;&gt;\
+  &lt;&lt;if $stamina gte 3&gt;&gt;\
     &lt;&lt;if $rng is 3 and !$randomEvent["狗球"] and !$boughtGoods["狗球"]&gt;&gt;\
       &lt;&lt;set _wander to "狗球攬客"&gt;&gt;\
     &lt;&lt;elseif $rng is 4 and !$randomEvent["PaYi"] and !$boughtGoods["PaYi"]&gt;&gt;\
       &lt;&lt;set _wander to "PaYi攬客"&gt;&gt;\
-    &lt;&lt;elseif $rng is 6 and $stamina lt 50 and (!$randomEvent["sausage"] or $inventory.includes("香腸"))&gt;&gt;\
+    &lt;&lt;elseif $rng is 6 and $stamina lt 50 and (!$randomEvent["sausage"] or ($randomEvent["sausage"] and $inventory.includes("香腸")))&gt;&gt;\
       &lt;&lt;set _wander to "香腸"&gt;&gt;\
     &lt;&lt;elseif $rng is 7 and !$randomEvent["麥香魚"] and !$boughtGoods["麥香魚"]&gt;&gt;\
       &lt;&lt;set _wander to "麥香魚攬客"&gt;&gt;\
@@ -1950,7 +1959,7 @@ Macro.add('message', {
       你向小狗攤主表示等等會再過去看看。
       小狗「ㄇ！」了一聲，似乎是意會了。你彷彿能從狗球的眼中看出期待。
     &lt;&lt;case 1&gt;&gt;\
-      你看見小狗露出了難過的小表情，一邊念叨著：「ㄇ噗……」
+      「ㄇ噗……」你看見小狗露出了難過的表情。
     &lt;&lt;default&gt;&gt;\
       出現非預期的錯誤！
   &lt;&lt;/switch&gt;&gt;\
@@ -2116,8 +2125,8 @@ Macro.add('message', {
 
 <tw-passagedata pid="24" name="公園" position="325,100" size="100,100">\
   &lt;&lt;rng 3&gt;&gt;\
-  你在AFD41-26會場外的公園。
-  這裡也有著不少人，有些人逛完場次後在野餐休息，也有附近居民在慢跑。
+  你在會場外的公園。
+  這裡有著不少人，有些人逛完場次後在野餐休息，也有附近居民在慢跑。
   &lt;&lt;switch $rng&gt;&gt;\
     &lt;&lt;case 1&gt;&gt;\
       有一些人正在遛著穿獸裝的人。
@@ -2258,7 +2267,10 @@ Macro.add('message', {
   你看著四周的珠頸斑鳩們振翅衝向了你，翅膀跟麵包屑毫無殺傷力地撲在臉上。
   你的眼前一片漆黑……
 
-  [[繼續|珠頸斑鳩3]]
+  &lt;&lt;link 繼續 珠頸斑鳩3&gt;&gt;
+    &lt;&lt;set $location to "大廳"&gt;&gt;
+    &lt;&lt;map()&gt;&gt;
+  &lt;&lt;/link&gt;&gt;
 </tw-passagedata>
 
 <tw-passagedata pid="28" name="珠頸斑鳩3" position="325,100" size="100,100">\
@@ -2311,7 +2323,7 @@ Macro.add('message', {
   &lt;i&gt;\
   「想脫離繁忙的都市節奏與千篇一律的乾癟麵包屑嗎？鎮外幾哩即可體驗郊外生活與新鮮野食！跟著在地導遊們踏上自由奔放的旅程吧，現在就報名荒原旅行團，古菇顧！」
 
-  「親切的植物、流沙生態觀察、會抱臉的小生物、神秘高塔、傳說中的古老巨鳥！鴿們探險隊現正招募中，一起探索刺激又神秘的郊區吧！」
+  「親切的植物、流沙生態觀察、會抱臉的小生物、神祕高塔、傳說中的古老巨鳥！鴿們探險隊現正招募中，一起探索刺激又神祕的郊區吧！」
   &lt;/i&gt;\
 </tw-passagedata>
 
@@ -3008,7 +3020,7 @@ Macro.add('message', {
 </tw-passagedata>
 
 <tw-passagedata pid="60" name="香腸" position="325,100" size="100,100">\
-  &lt;&lt;set $randomEvent["sausage"] to true&gt;&gt;\
+  &lt;&lt;set $randomEvent["sausage"] to 1&gt;&gt;\
   &lt;&lt;if !$inventory.includes("香腸")&gt;&gt;\
     你逛累了展場打算來個中場休息，但……
     
@@ -3025,7 +3037,7 @@ Macro.add('message', {
     他遞出了他的遊戲，看來他又在推銷了。
   
     標價上寫著「NT$10」。
-    
+
     &lt;&lt;buy 羊球 "《野人模擬器 ～囚禁初戀的他～　@@font-size:14px;請努力讓他不要死掉或者精神崩潰@@》"&gt;&gt;
     &lt;&lt;link 不買 購買羊球商品&gt;&gt;\
       &lt;&lt;set $phase to 1&gt;&gt;
@@ -3048,6 +3060,7 @@ Macro.add('message', {
   &lt;&lt;/link&gt;&gt;
   &lt;&lt;link 拒絕 香腸3&gt;&gt;\
     &lt;&lt;set $phase to 1&gt;&gt;
+    &lt;&lt;set $location to "大廳"&gt;&gt;
   &lt;&lt;/link&gt;&gt;&lt;&lt;stat 壓力 2&gt;&gt;
 </tw-passagedata>
 
@@ -3134,6 +3147,7 @@ Macro.add('message', {
 <tw-passagedata pid="66" name="購買羊球商品" position="325,100" size="100,100">\
   &lt;&lt;switch $phase&gt;&gt;\
     &lt;&lt;case 0&gt;&gt;\
+      &lt;&lt;set $randomEvent["sausage"] to 2&gt;&gt;\
       儘管標題很惡俗，你依然買了那隻羊推銷的遊戲。你對於內容很感興趣。
 
       你看了看封面，看起來就像小時候那些要插卡帶的古早遊戲，美術風格是類似初代Game Boy主機會有的綠色復古像素風。
@@ -3512,12 +3526,17 @@ Macro.add('message', {
   [[返回展場|展場]]
 </tw-passagedata>
 
-<tw-passagedata pid="86" name="背包" tags="noreturn" position="100,500" size="100,100">\
+<tw-passagedata pid="86" name="背包" tags="noreturn no-history" position="100,500" size="100,100">\
   &lt;&lt;if $inventory.length is 0&gt;&gt;\
     沒有東西。
   &lt;&lt;else&gt;&gt;\
     &lt;div id="items"&gt;\
-      你的背包裡有：&lt;&lt;= $inventory.join(&#39;、&#39;)&gt;&gt;。
+      你的背包裡有：
+      &lt;&lt;for _i to 0; _i lt $inventory.length; _i++&gt;&gt;\
+        &lt;&lt;if !($inventory.count($inventory[_i]) gt 1 && _i is not $inventory.lastIndexOf($inventory[_i]))&gt;&gt;\
+          &lt;&lt;=`&lt;li style = "margin-left: 1em;"&gt;$inventory[_i]` + `${$inventory.count($inventory[_i]) gt 1 ? (" * " + $inventory.count($inventory[_i])) : ""}&lt;/li&gt;`&gt;&gt;\
+        &lt;&lt;/if&gt;&gt;\
+      &lt;&lt;/for&gt;&gt;\
       &lt;&lt;if $inventory.includes('奇怪的同人誌')&gt;&gt;
         你可以閱讀奇怪的同人誌。
         &lt;&lt;link 打開&gt;&gt;\
@@ -3529,6 +3548,25 @@ Macro.add('message', {
       &lt;&lt;/if&gt;&gt;\
     &lt;/div&gt;\
   &lt;&lt;/if&gt;&gt;\
+
+  &lt;&lt;link '返回' $return&gt;&gt;&lt;&lt;/link&gt;&gt;
+</tw-passagedata>
+
+<tw-passagedata pid="87" name="致謝名單" tags="noreturn no-history" position="100,500" size="100,100">\
+  &lt;span style = "font-size: 28px; font-weight: bold;"&gt;參與者名單&lt;/span&gt;
+  
+  &lt;span style = "font-size: 20px; font-weight: bold;"&gt;程式&lt;/span&gt;
+  糯米
+
+  &lt;span style = "font-size: 20px; font-weight: bold;"&gt;文本&lt;/span&gt;
+  &lt;li style = "margin-left: 1em;"&gt;隨機文本&lt;/li&gt;\
+  爆龍、西法、PaYi、小梅、頁、塌扣、既、祈手、Sugy、糯米
+
+  &lt;li style = "margin-left: 1em;"&gt;公園文本&lt;/li&gt;\
+  爆龍、PaYi、Pers、糯米
+  
+  &lt;li style = "margin-left: 1em;"&gt;攤位文本&lt;/li&gt;\
+  西法、PaYi、白酒（酸葉）、Pers、貝卡、泉子（子泉）、Sugy、帕批、糯米
 
   &lt;&lt;link '返回' $return&gt;&gt;&lt;&lt;/link&gt;&gt;
 </tw-passagedata>
