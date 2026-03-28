@@ -147,6 +147,40 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   src: url(https://cdn.jsdelivr.net/gh/max32002/naikaifont@1.0/webfont/NaikaiFont-Regular-Lite.woff2) format("woff2"), url(https://cdn.jsdelivr.net/gh/max32002/naikaifont@1.89/webfont/NaikaiFont-Regular.woff2) format("woff2");
 }
 
+#strap-on {
+  color: white;
+  animation: strap-on 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes strap-on {
+  0%, 100% {
+    text-shadow: 0 0 20px #fff, 0 0 100px #fff, 0 0 20px #fff;
+    color: palevioletred;
+  }
+  12.5% {
+    color: 	indianred;
+  }
+  25% {
+    color: lightsalmon;
+  }
+  37.5% {
+    color: 	goldenrod;
+  }
+  50% {
+    text-shadow: 0 0 35px #fff, 0 0 120px #fff, 0 0 30px #fff;
+    color: forestgreen;
+  }
+  62.5% {
+    color: dodgerblue;
+  }
+  75% {
+    color: royalblue;
+  }
+  87.5% {
+    color: mediumpurple;
+  }
+}
+
 /* SlideWin styling v1.0 */
 body.slideWin {
 	overflow: hidden;
@@ -3534,7 +3568,11 @@ Macro.add('message', {
       你的背包裡有：
       &lt;&lt;for _i to 0; _i lt $inventory.length; _i++&gt;&gt;\
         &lt;&lt;if !($inventory.count($inventory[_i]) gt 1 && _i is not $inventory.lastIndexOf($inventory[_i]))&gt;&gt;\
-          &lt;&lt;=`&lt;li style = "margin-left: 1em;"&gt;$inventory[_i]` + `${$inventory.count($inventory[_i]) gt 1 ? (" * " + $inventory.count($inventory[_i])) : ""}&lt;/li&gt;`&gt;&gt;\
+          &lt;&lt;if $inventory[_i] is "20英吋穿戴式馬屌"&gt;&gt;\
+            &lt;li id = "strap-on" style = "margin-left: 1em;"&gt;20英吋穿戴式馬屌&lt;/li&gt;\
+          &lt;&lt;else&gt;&gt;\
+            &lt;&lt;=`&lt;li style = "margin-left: 1em;"&gt;$inventory[_i]` + `${$inventory.count($inventory[_i]) gt 1 ? (" * " + $inventory.count($inventory[_i])) : ""}&lt;/li&gt;`&gt;&gt;\
+          &lt;&lt;/if&gt;&gt;\
         &lt;&lt;/if&gt;&gt;\
       &lt;&lt;/for&gt;&gt;\
       &lt;&lt;if $inventory.includes('奇怪的同人誌')&gt;&gt;
