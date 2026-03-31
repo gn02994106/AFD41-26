@@ -1656,7 +1656,9 @@ Macro.add('message', {
                               "KylarStole": false,
                               "sausage": 0,
                               "糕糕": false,
-                              "麥香魚": false}&gt;&gt;
+                              "麥香魚": false,
+                              "撞科比": false,
+                              "王祥": false}&gt;&gt;
   &lt;&lt;set $boughtGoods to {"狗球": false,
                               "PaYi": false,
                               "阿酒": false,
@@ -1671,7 +1673,7 @@ Macro.add('message', {
                         "阿酒": {"惠特妮布丁吊飾": 100, "貼有「友善食光」標籤的惠特妮布丁吊飾": 70, "惠特妮迷你胸部滑鼠墊吊飾": 100},
                         "鼠球": {"蘋果乾": 100, "奶油麵包": 120, "巧克力米": 150},
                         "子泉": {"《凡爾賽孤兒》": 450},
-                        "羊球": {"《野人模擬器 ～囚禁初戀的他～　@@font-size:14px;請努力讓他不要死掉或者精神崩潰@@》": 10},
+                        "羊球": {"《野人模擬器 ～囚禁初戀的他～　@@font-size:14px;請努力讓他不要死掉或者精神崩潰（半成品）@@》": 5},
                         "糕糕": {"很貴的白色小狗毛（？）": 100},
                         "麥香魚": {"5公分麥香魚娃娃": 120, "女僕裝麥香姬飯友": 200, "麥香姬限量掛軸": 400}}&gt;&gt;\
 
@@ -1887,16 +1889,18 @@ Macro.add('message', {
       &lt;&lt;set _wander to "香腸"&gt;&gt;\
     &lt;&lt;elseif $rng is 7 and !$randomEvent["麥香魚"] and !$boughtGoods["麥香魚"]&gt;&gt;\
       &lt;&lt;set _wander to "麥香魚攬客"&gt;&gt;\
+    &lt;&lt;elseif $rng is 8 and !$randomEvent["撞科比"]&gt;&gt;\
+      &lt;&lt;set _wander to "撞科比"&gt;&gt;\
     &lt;&lt;/if&gt;&gt;\
     \
     &lt;&lt;link 閒逛 `_wander ? _wander : _next`&gt;&gt;\
-      &lt;&lt;rng 7&gt;&gt;
+      &lt;&lt;rng 8&gt;&gt;
       &lt;&lt;stamina -3&gt;&gt;\
     &lt;&lt;/link&gt;&gt;&lt;&lt;stat 體力 -3&gt;&gt;
   &lt;&lt;/if&gt;&gt;\
   \
   &lt;&lt;link 休息 _next&gt;&gt;\
-    &lt;&lt;rng 7&gt;&gt;
+    &lt;&lt;rng 8&gt;&gt;
     &lt;&lt;stamina 1&gt;&gt;\
   &lt;&lt;/link&gt;&gt;&lt;&lt;stat 體力 1&gt;&gt;
 
@@ -2158,7 +2162,7 @@ Macro.add('message', {
 </tw-passagedata>
 
 <tw-passagedata pid="24" name="公園" position="325,100" size="100,100">\
-  &lt;&lt;rng 3&gt;&gt;\
+  &lt;&lt;rng 4&gt;&gt;\
   你在會場外的公園。
   這裡有著不少人，有些人逛完場次後在野餐休息，也有附近居民在慢跑。
   &lt;&lt;switch $rng&gt;&gt;\
@@ -2171,6 +2175,19 @@ Macro.add('message', {
       你發現遠方有個藍色身影正蹲在草叢裡。
       你仔細觀察發現他的頭上有對牛角，尾椎處還有細細長長的尾巴，感覺像是剛從場次出來的人。
       他似乎正咀嚼著什麼，你感覺你應該離他遠一點。
+    &lt;&lt;case 4&gt;&gt;
+      &lt;&lt;if !$randomEvent["王祥"]&gt;&gt;\
+        &lt;&lt;set $randomEvent["王祥"] to true&gt;&gt;\
+        附近有個人吸引了你的注意。
+        @@font-size:24px;「……AFD是什麼？」@@
+        他說話的分貝特別大聲，頭上還吊著燈。你不禁思考這是什麼角色扮演嗎？
+        
+        @@font-size:24px;「A FUCKING DICK？」@@
+        他似乎完全沒有察覺到自己正在打擾周圍的人，只是自顧自地在原地思考著。
+        旁邊幾個路過的人忍不住多看了幾眼，但很快又裝作沒看到地離開了。
+
+        你開始懷疑，這可能不是角色扮演，而是某種你完全無法理解的行為藝術。
+        &lt;&lt;/if&gt;&gt;\
     &lt;&lt;default&gt;&gt;\
       出現非預期的錯誤！
   &lt;&lt;/switch&gt;&gt;\
@@ -2795,6 +2812,8 @@ Macro.add('message', {
   「這是一個充滿玫瑰花瓣、昂貴香水與心碎味道的宮殿——是折斷玫瑰的最後華爾茲。
   而你，我親愛的孤兒、被神遺棄的玫瑰，不過是個在陰暗巷弄打滾的悲情主角……」
 
+  &lt;img src="https://images.plurk.com/65RiTBeSyCdOxBQuTvRygV.png" alt="《凡爾賽孤兒》"&gt;
+
   你看向刊物，封面寫著大標題《凡爾賽孤兒》。
   上面畫著好幾個角色，每個人都有一雙星光璀璨的眼睛。
   中間粉色頭髮的角色似乎就是主角。
@@ -3070,9 +3089,9 @@ Macro.add('message', {
     那隻羊伸手拉了拉你的衣角，一隻眼睛依然是那樣水汪汪地看著你。
     他遞出了他的遊戲，看來他又在推銷了。
   
-    標價上寫著「NT$10」。
+    標價上寫著「NT$&lt;del&gt;10&lt;/del&gt; 5」。
 
-    &lt;&lt;buy 羊球 "《野人模擬器 ～囚禁初戀的他～　@@font-size:14px;請努力讓他不要死掉或者精神崩潰@@》"&gt;&gt;
+    &lt;&lt;buy 羊球 "《野人模擬器 ～囚禁初戀的他～　@@font-size:14px;請努力讓他不要死掉或者精神崩潰（半成品）@@》"&gt;&gt;
     &lt;&lt;link 不買 購買羊球商品&gt;&gt;\
       &lt;&lt;set $phase to 1&gt;&gt;
     &lt;&lt;/link&gt;&gt;
@@ -3106,7 +3125,7 @@ Macro.add('message', {
       味道不錯，但你肯定不會想細探這是否符合食用級規定。他們甚至沒給你發票。
 
       稍微低頭，你注意到一顆圓圓的羊球用著一顆水汪汪大眼睛向你推銷他的遊戲：
-      《野人模擬器 ～囚禁初戀的他～　@@font-size:14px;請努力讓他不要死掉或者精神崩潰@@》
+      《野人模擬器 ～囚禁初戀的他～　@@font-size:14px;請努力讓他不要死掉或者精神崩潰（半成品）@@》
 
       天啊！這命名真的有打算吸引客戶嗎？
       如果你是個正常人大概會選擇無視，但……現在的情況你也很難去說正常，況且那隻羊身邊還坐著一隻滿頭紅髮的狗。
@@ -3560,7 +3579,72 @@ Macro.add('message', {
   [[返回展場|展場]]
 </tw-passagedata>
 
-<tw-passagedata pid="86" name="背包" tags="noreturn no-history" position="100,500" size="100,100">\
+<tw-passagedata pid="86" name="撞科比" position="325,100" size="100,100">\
+  &lt;&lt;set $randomEvent["撞科比"] to true&gt;&gt;\
+  你在場內閒晃時，不小心撞上了一名黃髮男子。仔細一看，對方頭上竟長著一對牛角。
+  
+  你感覺這一下撞得不輕。&lt;&lt;stat 疼痛 1&gt;&gt;
+
+  &lt;&lt;link 索要賠償 撞科比2&gt;&gt;\
+    &lt;&lt;set $phase to 0&gt;&gt;
+  &lt;&lt;/link&gt;&gt;
+  &lt;&lt;link 走開 撞科比2&gt;&gt;\
+    &lt;&lt;set $phase to 1&gt;&gt;
+  &lt;&lt;/link&gt;&gt;
+</tw-passagedata>
+
+<tw-passagedata pid="87" name="撞科比2" position="325,100" size="100,100">\
+  &lt;&lt;switch $phase&gt;&gt;\
+    &lt;&lt;case 0&gt;&gt;\
+      「……？」對方一臉不可置信地看著你，接著乾脆無視你轉身離開。
+      
+      被無視的感覺糟糕透了，你感覺自己的情緒有些失去控制。&lt;&lt;stat 自控 -2&gt;&gt;
+
+      [[返回展場|展場]]
+    &lt;&lt;case 1&gt;&gt;\
+      對方似乎察覺到你想離開，忽然伸手抓住了你。
+      「撞到我都出血了，你想去哪裡？」男子看起來十分憤怒，你感覺他對你不懷好意。
+      
+      「把你的錢交出來。」這聽起來並不是請求。&lt;&lt;stat 自控 -1&gt;&gt;
+
+      &lt;&lt;if $money gt 0&gt;&gt;\
+        &lt;&lt;link `"交給對方 (NT$" + ($money gte 2000 ? 2000 : $money) + ")"` 撞科比3&gt;&gt;\
+        &lt;&lt;set $phase to ($money gte 2000 ? 0 : 1)&gt;&gt;
+        &lt;&lt;set $money -= ($money gte 2000 ? 2000 : $money)&gt;&gt;\
+        &lt;&lt;/link&gt;&gt;
+      &lt;&lt;/if&gt;&gt;\
+      &lt;&lt;link 無視對方 撞科比3&gt;&gt;\
+        &lt;&lt;set $phase to 2&gt;&gt;
+      &lt;&lt;/link&gt;&gt;
+    &lt;&lt;default&gt;&gt;\
+      出現非預期的錯誤！
+  &lt;&lt;/switch&gt;&gt;\
+</tw-passagedata>
+
+<tw-passagedata pid="88" name="撞科比3" position="325,100" size="100,100">\
+  &lt;&lt;switch $phase&gt;&gt;\
+    &lt;&lt;case 0&gt;&gt;\
+      對方接過錢後，當著你的面慢慢點了一遍。
+      你感覺他的視線在你身上上下打量著。
+
+      「……以後走路小心點。」他看起來很不耐煩，卻還是在臨走前露出一個得意的笑。
+
+      你我都知道，他只是個惡霸。
+    &lt;&lt;case 1&gt;&gt;\
+    &lt;&lt;case 2&gt;&gt;\
+      你和對方打了一架，@@color:red;很明顯你不是眼前這名男子的對手。@@
+      他從你身上順走了一些錢。@@color:red; | - NT$&lt;&lt;=($money gte 3000 ? 3000 : $money)&gt;&gt;@@&lt;&lt;set $money -= ($money gte 3000 ? 3000 : $money)&gt;&gt;
+
+      你只是想隨便逛個場次，卻遇到這種怪咖。
+      你忍不住握緊拳頭，心裡泛起一陣不安。&lt;&lt;stat 自控 -1&gt;&gt;&lt;&lt;stat 體力 -2&gt;&gt;&lt;&lt;stamina -2&gt;&gt;
+    &lt;&lt;default&gt;&gt;\
+      出現非預期的錯誤！
+  &lt;&lt;/switch&gt;&gt;\
+
+  [[返回展場|展場]]
+</tw-passagedata>
+
+<tw-passagedata pid="89" name="背包" tags="noreturn no-history" position="100,500" size="100,100">\
   &lt;&lt;if $inventory.length is 0&gt;&gt;\
     沒有東西。
   &lt;&lt;else&gt;&gt;\
@@ -3590,7 +3674,7 @@ Macro.add('message', {
   &lt;&lt;link '返回' $return&gt;&gt;&lt;&lt;/link&gt;&gt;
 </tw-passagedata>
 
-<tw-passagedata pid="87" name="致謝名單" tags="noreturn no-history" position="100,500" size="100,100">\
+<tw-passagedata pid="90" name="致謝名單" tags="noreturn no-history" position="100,500" size="100,100">\
   &lt;span style = "font-size: 28px; font-weight: bold;"&gt;參與者名單&lt;/span&gt;
   
   &lt;span style = "font-size: 20px; font-weight: bold;"&gt;程式&lt;/span&gt;
@@ -3598,10 +3682,10 @@ Macro.add('message', {
 
   &lt;span style = "font-size: 20px; font-weight: bold;"&gt;文本&lt;/span&gt;
   &lt;li style = "margin-left: 1em;"&gt;隨機文本&lt;/li&gt;\
-  爆龍、西法、PaYi、小梅、頁、塌扣、既、祈手、Sugy、糯米
+  爆龍、西法、PaYi、小梅、頁、塌扣、既、祈手、Sugy、王祥、糯米
 
   &lt;li style = "margin-left: 1em;"&gt;公園文本&lt;/li&gt;\
-  爆龍、PaYi、Pers、糯米
+  爆龍、PaYi、Pers、王祥、糯米
   
   &lt;li style = "margin-left: 1em;"&gt;攤位文本&lt;/li&gt;\
   西法、PaYi、白酒（酸葉）、Pers、貝卡、泉子（子泉）、Sugy、帕批、糯米
